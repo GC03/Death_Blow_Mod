@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6284898203685548117}
   m_Layer: 0
   m_Name: Armor
-  m_TagString: Untagged
+  m_TagString: Prisoner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2246,7 +2246,7 @@ GameObject:
   - component: {fileID: 8605797566700006920}
   m_Layer: 0
   m_Name: hair2
-  m_TagString: Untagged
+  m_TagString: Prisoner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5774,7 +5774,7 @@ GameObject:
   - component: {fileID: 2353400716575466536}
   m_Layer: 0
   m_Name: root
-  m_TagString: Untagged
+  m_TagString: Prisoner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5840,7 +5840,7 @@ GameObject:
   - component: {fileID: 2999161610829764967}
   m_Layer: 0
   m_Name: head1
-  m_TagString: Untagged
+  m_TagString: Prisoner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6938,7 +6938,7 @@ GameObject:
   - component: {fileID: 1361103383389409544}
   m_Layer: 0
   m_Name: fur
-  m_TagString: Untagged
+  m_TagString: Prisoner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -17,6 +17,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float gravity = -9.81f;
+
+    [Header("Throwing Weapon")]
+    [SerializeField] private Transform weaponPos;
+    [SerializeField] private GameObject daggerPrefab;
+    [SerializeField] private float throwForce;
+    [SerializeField] private int numberOfThrows;
+
     private float currentHealth;
     private float currentStamina;
     private Vector3 velocity;
@@ -29,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isBlocking = false;
     private bool isGrounded;
     private float attackRange = 7.0f;
-    
+    private bool firstTouched = true;
     
     void Start()
     {
@@ -46,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
         //     velocity.y = -2.0f;
         // }
         velocity.y = -2.0f;
-
+        firstTouched = true;
         if (Input.GetKeyDown(KeyCode.Space) && !isDodging)
         {
             StartCoroutine(Dodge());
@@ -66,6 +73,15 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             Block();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (numberOfThrows > 0)
+            {
+                Throw();
+                numberOfThrows--;
+            }
         }
 
         // Add gravity to the player
@@ -108,6 +124,28 @@ public class PlayerMovement : MonoBehaviour
         // Block Logic Here
         
         isBlocking = false;
+    }
+
+    void Throw()
+    {
+        GameObject projectile = Instantiate(daggerPrefab, weaponPos.position, cameraTransform.rotation);
+
+        // Makes the dagger faces forward.
+        projectile.transform.Rotate(0f, 180f, 0f);
+
+        Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+
+        // Makes the dagger start from the center of camera.
+        Vector3 forceDirection = cameraTransform.forward;
+        RaycastHit hit;
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, 500f))
+        {
+            forceDirection = (hit.point - weaponPos.position).normalized;
+        }
+
+        Vector3 daggerForce = forceDirection * throwForce;
+
+        projectileRb.AddForce(daggerForce, ForceMode.Impulse);
     }
 
     // Combine the Dodge and HeadDown together later if needed
@@ -214,5 +252,14 @@ public class PlayerMovement : MonoBehaviour
         // Debug.Log("health is: " + currentHealth);
     }
 
-    
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        // The variable firstTouched is added to limit the number of times the dagger can be picked up.
+        if (hit.gameObject.tag == "Dagger" && firstTouched)
+        {
+            firstTouched = false;
+            Destroy(hit.gameObject);
+            numberOfThrows++;
+        }
+    }
 }
