@@ -96,7 +96,7 @@ public class EnemyAi : MonoBehaviour
 
     public void CheckDead()
     {
-        if(Stage1Done == false && Tutorial.Health == 0)
+        if(Stage1Done == false && Tutorial.Health <= 0)
         {
             Stage1Done = true;
             // need to add in a death animation or ragdoll here
@@ -104,7 +104,7 @@ public class EnemyAi : MonoBehaviour
             spawnDead = true;
             
         }
-        else if(Stage1Done == true && Boss.Health == 0)
+        else if(Stage1Done == true && Boss.Health <= 0)
         {
             // boss is dead then add in a death animation or ragdoll here
             this.animateEnemy.SetTrigger("Death");
@@ -113,6 +113,7 @@ public class EnemyAi : MonoBehaviour
     }
     public void EnemyTakeDamage(float DamageToTake) // TakeDamage deals with the enemies direct health
     {
+        Debug.Log(Tutorial.Health);
         if(Tutorial.Health <= 0f || Boss.Health <= 0f)
         {
             CheckDead();
