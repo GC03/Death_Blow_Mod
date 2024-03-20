@@ -13,6 +13,12 @@ Due to the limited nature of daggers, it is both unwise and also unfeasible to k
 
 # Main Roles #
 
+Before anything else, I would like to state that this project had been a challenge. The time pressure along with the final exams circumstances added a lot of stress to the development.
+
+Having to understand team Death Blow's code base on my own proved to be a challenge. After forking their repository, I was immediately confused by there being 2 branches called main and new_main. I thought they had moved to working on new_main so I developed the mod there at first. Turns out I was wrong and main branch was still the branch for main development. Merging from new_main into main was another huge problem, as new_main and main had vastly different content.
+
+To be honest, I think developing a mod for an unfinished game had been a bad idea. Without the completed the game and not to mention documentation for it, it was hard to develope and test the mod. As of the state of writing this, I could only test my dagger on an enemy that is not moving. Also the enemy health bar had not been implemented, so it was hard to test dealing damage without visual feedback. Not having a complete enemy combat also means I was not able to balance the mod.
+
 ## Blacksmith 
 
 ### Dagger sprite:
@@ -38,6 +44,11 @@ This is another frustrating part of development, due to my lack of knowledge of 
 I started with adding a DaggerController script(https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/DaggerController.cs) and attached it to the dagger prefab.
 I first coded in the part of the dagger hitting the enemy and dealing damage. This part was not too much of a headache, just the usual collision detection between colliders. However, when I tried to code the logic for the player picking up the dagger on the floor, I tried using the same logic and it did not work. I was confused by this behaviour, and I made sure that the player had a capsule collider and the dagger had a box collider. Yet despite hours of testing, I was not able to make the collision detection work. The worst thing was that, in game the player was able to step on top of the dagger, so that implied that the colliders did work, just not the detection.
 After a long time of research, I finally found out the culprit was the CharacterController component, something I never used before. Turns out this component has its own collider and collision detection system, and it would not work with the dagger's collider detection. In the end, I relocated the detection of player touching dagger to the PlayerMovement script https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/PlayerMovement.cs#L255-L264 and the detection finally worked. However, the collision detection was triggered multiple times resulting in more than 1 dagger replenished. I had to use a boolean variable firstTouched to ignore the multiple calls to the function.
+
+### Sound effect
+I added a Audio Source component to the dagger prefab. In dagger controller, when the dagger hits an enemy, it will play a sound effect to signify hit.
+
+Credits to leohpaz for the impact sound effect (https://assetstore.unity.com/packages/audio/sound-fx/rpg-essentials-sound-effects-free-227708)
 
 
 
