@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 public class HUDController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -19,6 +20,9 @@ public class HUDController : MonoBehaviour
     private float currentHealth;
     private bool HPactive = true;
     private bool enemyActive = false;
+    [Header("Dagger")]
+    [SerializeField] private PlayerMovement playerController;
+    [SerializeField] private GameObject daggerCounter;
     void Start()
     {
         currentHealth = maxHealth;
@@ -43,5 +47,8 @@ public class HUDController : MonoBehaviour
             enemyActive = !enemyActive;
             playerHealth.gameObject.SetActive(enemyActive);
         }
+
+        
+        daggerCounter.GetComponent<TMP_Text>().SetText(playerController.GetDaggerCount().ToString());
     }
 }

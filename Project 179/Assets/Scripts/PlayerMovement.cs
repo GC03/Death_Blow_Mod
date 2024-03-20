@@ -100,8 +100,8 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, attackRange))
         {
-            // Debug.Log("Attacked: " + hit.collider.name);
-            // Debug.Log("enemy Tag is: " + hit.collider.tag);
+            Debug.Log("Attacked: " + hit.collider.name);
+            Debug.Log("enemy Tag is: " + hit.collider.tag);
 
             if (hit.collider.tag =="Prisoner" || hit.collider.tag == "Gladiator")
             {
@@ -261,5 +261,10 @@ public class PlayerMovement : MonoBehaviour
             Destroy(hit.gameObject);
             numberOfThrows++;
         }
+    }
+
+    public int GetDaggerCount()
+    {
+        return numberOfThrows;
     }
 }
