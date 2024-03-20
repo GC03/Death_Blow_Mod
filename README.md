@@ -1,87 +1,44 @@
-# The title of your game #
+# Dagger Mod for Death Blow #
 
 ## Summary ##
 
-**A paragraph-length pitch for your game.**
-
-## Project Resources
-
-[Web-playable version of your game.](https://itch.io/)  
-[Trailor](https://youtube.com)  
-[Press Kit](https://dopresskit.com/)  
-[Proposal: make your own copy of the linked doc.](https://docs.google.com/document/d/1qwWCpMwKJGOLQ-rRJt8G8zisCa2XHFhv6zSWars0eWM/edit?usp=sharing)  
+Currently, Death Blow only offers melee weapon option. To spice up the combat experience, this mod adds in throwable daggers to improve gameply variety.
 
 ## Gameplay Explanation ##
 
-**In this section, explain how the game should be played. Treat this as a manual within a game. Explaining the button mappings and the most optimal gameplay strategy is encouraged.**
+During combat, the player can press 'F' to throw a dagger and deal 25 damage to the enemy. 
+Since it ruins the fun of combat if the player can just spam dagger throwing, this mod limits the numbers of daggers the player has to 10. However, if the player misses and the dagger is on the floor, player walk to the dagger and it will be picked up automatically.
 
-
-**Add it here if you did work that should be factored into your grade but does not fit easily into the proscribed roles! Please include links to resources and descriptions of game-related material that does not fit into roles here.**
+Due to the limited nature of daggers, it is both unwise and also unfeasible to keep throwing daggers.
 
 # Main Roles #
 
-Your goal is to relate the work of your role and sub-role in terms of the content of the course. Please look at the role sections below for specific instructions for each role.
+## Blacksmith
 
-Below is a template for you to highlight items of your work. These provide the evidence needed for your work to be evaluated. Try to have at least four such descriptions. They will be assessed on the quality of the underlying system and how they are linked to course content. 
+Dagger sprite:
+For the 3D model of the dagger, I used a free asset from the Unity Asset Store. It looks really cool and fits well with the game's art style.
 
-*Short Description* - Long description of your work item that includes how it is relevant to topics discussed in class. [link to evidence in your repository](https://github.com/dr-jam/ECS189L/edit/project-description/ProjectDocumentTemplate.md)
+Credit to Dwarven Curse the creator of the model (https://assetstore.unity.com/packages/3d/props/weapons/demonic-dagger-100125)
 
-Here is an example:  
-*Procedural Terrain* - The game's background consists of procedurally generated terrain produced with Perlin noise. The game can modify this terrain at run-time via a call to its script methods. The intent is to allow the player to modify the terrain. This system is based on the component design pattern and the procedural content generation portions of the course. [The PCG terrain generation script](https://github.com/dr-jam/CameraControlExercise/blob/513b927e87fc686fe627bf7d4ff6ff841cf34e9f/Obscura/Assets/Scripts/TerrainGenerator.cs#L6).
+Initiate throwing:
+I have added an extra key detection for 'F' in the Update function of PlayerMovement script. On key pressed, if the player still has a non-0 amount of daggers left, the Throw function will be called to spawn the dagger and the number of daggers will be deducted by 1.
+https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/PlayerMovement.cs#L78
 
-You should replay any **bold text** with your relevant information. Liberally use the template when necessary and appropriate.
+Dagger spawning:
+Once Throw function is called, the dagger prefab will be instantiated. However, it is spawned in the wrong orientation initially. Therefore I had to rotate it so the dagger blade actually faces the direction of trajectory. This took me a long time, as I was trying to deal with the quaternion system to make the dagger face the correct direction, and I in fact had no idea what quaternion is. After frustrating amount of hours, I suddenly realised I can just rotate the transform rather than manually calculating the correct quaternion to rotate the dagger.
+https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/PlayerMovement.cs#L134
 
-## Producer
+Dagger movement:
+To make the dagger actually moves towards the center of where the player is looking at, I had to use raycasting and vector arithmatics to calculate the force vector for the dagger's trajectory. Once direction is determined, apply force to the dagger in the determine direction.
+Without the raycast, I originally just applied forward force to the dagger, but this resulted in the dagger moving to a point right of the center.
+https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/PlayerMovement.cs#L141-L144
 
-**Describe the steps you took in your role as producer. Typical items include group scheduling mechanisms, links to meeting notes, descriptions of team logistics problems with their resolution, project organization tools (e.g., timelines, dependency/task tracking, Gantt charts, etc.), and repository management methodology.**
+Dagger collision:
+This is another frustrating part of development, due to my lack of knowledge of the CharacterController component that Death Blow's developers used.
+I started with adding a DaggerController script(https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/DaggerController.cs) and attached it to the dagger prefab.
+I first coded in the part of the dagger hitting the enemy and dealing damage. This part was not too much of a headache, just the usual collision detection between colliders. However, when I tried to code the logic for the player picking up the dagger on the floor, I tried using the same logic and it did not work. I was confused by this behaviour, and I made sure that the player had a capsule collider and the dagger had a box collider. Yet despite hours of testing, I was not able to make the collision detection work. The worst thing was that, in game the player was able to step on top of the dagger, so that implied that the colliders did work, just not the detection.
+After a long time of research, I finally found out the culprit was the CharacterController component, something I never used before. Turns out this component has its own collider and collision detection system, and it would not work with the dagger's collider detection. In the end, I relocated the detection of player touching dagger to the PlayerMovement script(https://github.com/GC03/Death_Blow_Mod/blob/50052a526d35edf48f8ac6fa7a641d2d2f7fdd2e/Project%20179/Assets/Scripts/PlayerMovement.cs#L255-L264) and the detection finally worked. However, the collision detection was triggered multiple times resulting in more than 1 dagger replenished. I had to use a boolean variable firstTouched to ignore the multiple calls to the function.
 
-## User Interface and Input
 
-**Describe your user interface and how it relates to gameplay. This can be done via the template.**
-**Describe the default input configuration.**
 
-**Add an entry for each platform or input style your project supports.**
 
-## Movement/Physics
-
-**Describe the basics of movement and physics in your game. Is it the standard physics model? What did you change or modify? Did you make your movement scripts that do not use the physics system?**
-
-## Animation and Visuals
-
-**List your assets, including their sources and licenses.**
-
-**Describe how your work intersects with game feel, graphic design, and world-building. Include your visual style guide if one exists.**
-
-## Game Logic
-
-**Document the game states and game data you managed and the design patterns you used to complete your task.**
-
-# Sub-Roles
-
-## Audio
-
-**List your assets, including their sources and licenses.**
-
-**Describe the implementation of your audio system.**
-
-**Document the sound style.** 
-
-## Gameplay Testing
-
-**Add a link to the full results of your gameplay tests.**
-
-**Summarize the key findings from your gameplay tests.**
-
-## Narrative Design
-
-**Document how the narrative is present in the game via assets, gameplay systems, and gameplay.** 
-
-## Press Kit and Trailer
-
-**Include links to your presskit materials and trailer.**
-
-**Describe how you showcased your work. How did you choose what to show in the trailer? Why did you choose your screenshots?**
-
-## Game Feel and Polish
-
-**Document what you added to and how you tweaked your game to improve its game feel.**

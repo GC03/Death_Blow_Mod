@@ -135,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
 
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
-        // Makes the dagger start from the center of camera.
+        // Makes the dagger moves towards the center of camera.
         Vector3 forceDirection = cameraTransform.forward;
         RaycastHit hit;
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, 500f))
