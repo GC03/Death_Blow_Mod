@@ -6,7 +6,7 @@ Currently, Death Blow only offers melee weapon option. To spice up the combat ex
 
 ## Gameplay Explanation ##
 
-During combat, the player can press 'F' to throw a dagger and deal 25 damage to the enemy. 
+During combat, the player can press 'F' to throw a dagger and deal 10 damage to the enemy. 
 Since it ruins the fun of combat if the player can just spam dagger throwing, this mod limits the numbers of daggers the player has to 10. However, if the player misses and the dagger is on the floor, player walk to the dagger and it will be picked up automatically.
 
 Due to the limited nature of daggers, it is both unwise and also unfeasible to keep throwing daggers.

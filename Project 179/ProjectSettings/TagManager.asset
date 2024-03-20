@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Prisoner
+  - Gladiator
+  - PrisonerAnchor
+  - GladiatorAnchor
+  - PrisonerSword
+  - GladiatorShield
+  - GladiatorSword
+  - Dagger
   layers:
   - Default
   - TransparentFX
