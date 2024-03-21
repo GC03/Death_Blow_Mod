@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject sword;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private bool inCutscene = false;
+    [SerializeField] private NavMeshAgent navMesh;
 
     [Header("Throwing Weapon")]
     [SerializeField] private Transform weaponPos;
@@ -38,11 +40,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isBlocking = false;
     private bool isGrounded;
     private float attackRange = 7.0f;
-    private bool firstTouched = true;private bool cutsceneControlled = false;
+    private bool firstTouched = true;
+    private bool cutsceneControlled = false;
     private bool HUDactive = false;
     private Transform currentAnchor;
-    [SerializeField] private bool inCutscene = false;
-    [SerializeField] private NavMeshAgent navMesh;
     void Start()
     {
         lastDodgeTime = 0f;
