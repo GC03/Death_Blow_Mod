@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Bar PlayerHealth;
@@ -12,9 +12,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CharacterController controller;
     [SerializeField] private Transform cameraTransform;
     // [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundDistance = 0.4f;
+    // [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float PlayerDamage = 50f;
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject sword;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float gravity = -9.81f;
 
@@ -36,15 +38,37 @@ public class PlayerMovement : MonoBehaviour
     private bool isBlocking = false;
     private bool isGrounded;
     private float attackRange = 7.0f;
-    private bool firstTouched = true;
-    
+    private bool firstTouched = true;private bool cutsceneControlled = false;
+    private bool HUDactive = false;
+    private Transform currentAnchor;
+    [SerializeField] private bool inCutscene = false;
+    [SerializeField] private NavMeshAgent navMesh;
     void Start()
     {
         lastDodgeTime = 0f;
         currentHealth = maxhHealth;
         currentStamina = maxStamina;
-        
+        PlayerHealth.SetMaxHealth(maxhHealth);
+        PlayerStamina.SetMaxHealth(maxStamina);
+        navMesh = GetComponent<NavMeshAgent>();
     }
+
+    public void setActiveHUD()
+    {
+        HUDactive = !HUDactive;
+        sword.gameObject.SetActive(HUDactive);
+        PlayerHealth.gameObject.SetActive(HUDactive);
+        PlayerStamina.gameObject.SetActive(HUDactive);
+    }
+    public void SetCutscene()
+    {
+        inCutscene = !inCutscene;
+    }
+    public void CutsceneMovement(Transform anchor)
+    {
+        cutsceneControlled = true;
+        currentAnchor = anchor;
+    }    
     void Update()
     {
         //isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -53,27 +77,44 @@ public class PlayerMovement : MonoBehaviour
         //     velocity.y = -2.0f;
         // }
         velocity.y = -2.0f;
-        firstTouched = true;
-        if (Input.GetKeyDown(KeyCode.Space) && !isDodging)
+        firstTouched = true;        
+        if (this.cutsceneControlled)
         {
-            StartCoroutine(Dodge());
-            StartCoroutine(HeadDown());
+            if (Vector3.Distance(transform.position, currentAnchor.position) < 1f)
+            {
+                cutsceneControlled = false;
+                navMesh.isStopped = true; // Stop the agent's movement
+                navMesh.enabled = false;
+            }
+            else
+            {
+                navMesh.isStopped = false; // Enable the agent's movement
+                navMesh.enabled = true;
+                navMesh.SetDestination(this.currentAnchor.position);
+            }
         }
+        if (!inCutscene)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !isDodging)
+            {
+                StartCoroutine(Dodge());
+                StartCoroutine(HeadDown());
+            }
 
-        if (!isDodging)
-        {
-            NormalMovement();
-        }
+            if (!isDodging)
+            {
+                NormalMovement();
+            }
 
-        if (Input.GetKeyDown(KeyCode.J) && !isAttacking)
-        {
-            Attack();
-        }
+            if ((Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Mouse0)) && !isAttacking)
+            {
+                Attack();
+            }
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            Block();
-        }
+            if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                Block();
+            }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -84,14 +125,19 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Add gravity to the player
-        // Equation: Y - Y0 = (1/2) * g * t^2
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+            // Add gravity to the player
+            // Equation: Y - Y0 = (1/2) * g * t^2
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
 
-        //Debug for now to check health
+            //Debug for now to check health
+
+        }
     }
+    void ScriptedMovement()
+    {
 
+    }
     void Attack()
     {
         isAttacking = true;
@@ -106,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
             if (hit.collider.tag =="Prisoner" || hit.collider.tag == "Gladiator")
             {
                 // Debug.Log("got into the attack");
-                hit.collider.GetComponent<EnemyAi>().EnemyTakeDamage(50f); // probably to high for right now
+                hit.collider.GetComponent<EnemyAi>().EnemyTakeDamage(PlayerDamage); // probably to high for right now
                 // Debug.Log("This is called");
             }
             
@@ -249,7 +295,7 @@ public class PlayerMovement : MonoBehaviour
         {
             GameOver();
         }
-        // Debug.Log("health is: " + currentHealth);
+        Debug.Log("health is: " + currentHealth);
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
